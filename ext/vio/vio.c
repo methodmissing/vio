@@ -156,7 +156,6 @@ vio_write(VALUE io, VALUE iov)
       TRAP_END;
     if (bytes_written < expected && bytes_written > 0) goto retry;
     vio_write_error();
-    if (bytes_written < expected) rb_raise(rb_eIOError, "Vectored I/O write failure!");
     for (i=0; i < cnt; i++) {
       rb_ary_push(results, INT2FIX(iovs[i].iov_len));
     }
