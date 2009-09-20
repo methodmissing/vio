@@ -1,44 +1,62 @@
-have_func: checking for rb_thread_blocking_region()... -------------------- no
+have_func: checking for rb_thread_blocking_region()... -------------------- yes
 
-"gcc -o conftest -I. -I/opt/local/lib/ruby/1.8/i686-darwin9.5.1 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -O2 -pipe -fno-common   conftest.c  -L. -L/opt/local/lib -L.      -lruby-static  -ldl -lobjc  "
-/opt/local/lib/ruby/1.8/mkmf.rb:266: warning: Insecure world writable dir /Users/lourens in PATH, mode 040753
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_thread_blocking_region’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
+"gcc -o conftest -I/opt/local/ruby19/include/ruby-1.9.1/i386-darwin9.7.0 -I/opt/local/ruby19/include/ruby-1.9.1/ruby/backward -I/opt/local/ruby19/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -g -Wall -Wno-unused-parameter -Wno-parentheses -Wno-missing-field-initializers -Wshorten-64-to-32 -Wpointer-arith -Wwrite-strings  -pipe conftest.c  -L. -L/opt/local/ruby19/lib -L. -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc "
+/opt/local/ruby19/lib/ruby/1.9.1/mkmf.rb:300: warning: Insecure world writable dir /Users/lourens in PATH, mode 040753
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_blocking_region; return 0; }
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
 /* end */
 
-"gcc -o conftest -I. -I/opt/local/lib/ruby/1.8/i686-darwin9.5.1 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -O2 -pipe -fno-common   conftest.c  -L. -L/opt/local/lib -L.      -lruby-static  -ldl -lobjc  "
-Undefined symbols:
-  "_rb_thread_blocking_region", referenced from:
-      _t in ccnCXhId.o
-ld: symbol(s) not found
-collect2: ld returned 1 exit status
+"gcc -o conftest -I/opt/local/ruby19/include/ruby-1.9.1/i386-darwin9.7.0 -I/opt/local/ruby19/include/ruby-1.9.1/ruby/backward -I/opt/local/ruby19/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -g -Wall -Wno-unused-parameter -Wno-parentheses -Wno-missing-field-initializers -Wshorten-64-to-32 -Wpointer-arith -Wwrite-strings  -pipe conftest.c  -L. -L/opt/local/ruby19/lib -L. -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { rb_thread_blocking_region(); return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_blocking_region; return 0; }
 /* end */
 
 --------------------
 
-have_var: checking for rb_trap_immediate in ruby.h,rubysig.h... -------------------- yes
+have_macro: checking for RUBY_UBF_IO in ruby.h... -------------------- yes
 
-"gcc -I. -I/opt/local/lib/ruby/1.8/i686-darwin9.5.1 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -O2 -pipe -fno-common     -c conftest.c"
+"gcc -I/opt/local/ruby19/include/ruby-1.9.1/i386-darwin9.7.0 -I/opt/local/ruby19/include/ruby-1.9.1/ruby/backward -I/opt/local/ruby19/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -g -Wall -Wno-unused-parameter -Wno-parentheses -Wno-missing-field-initializers -Wshorten-64-to-32 -Wpointer-arith -Wwrite-strings  -pipe   -c conftest.c"
 checked program was:
 /* begin */
-1: #include <ruby.h>
-2: #include <rubysig.h>
-3: 
+1: #include "ruby.h"
+2: 
+3: #include <ruby.h>
 4: /*top*/
-5: int main() { return 0; }
-6: int t() { const volatile void *volatile p; p = &(&rb_trap_immediate)[0]; return 0; }
+5: #ifndef RUBY_UBF_IO
+6: # error
+7: >>>>>> RUBY_UBF_IO undefined <<<<<<
+8: #endif
+/* end */
+
+--------------------
+
+have_var: checking for rb_trap_immediate in ruby.h,rubysig.h... -------------------- no
+
+"gcc -I/opt/local/ruby19/include/ruby-1.9.1/i386-darwin9.7.0 -I/opt/local/ruby19/include/ruby-1.9.1/ruby/backward -I/opt/local/ruby19/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -g -Wall -Wno-unused-parameter -Wno-parentheses -Wno-missing-field-initializers -Wshorten-64-to-32 -Wpointer-arith -Wwrite-strings  -pipe   -c conftest.c"
+In file included from conftest.c:4:
+/opt/local/ruby19/include/ruby-1.9.1/ruby/backward/rubysig.h:14:2: warning: #warning rubysig.h is obsolete
+conftest.c: In function ‘t’:
+conftest.c:8: error: ‘rb_trap_immediate’ undeclared (first use in this function)
+conftest.c:8: error: (Each undeclared identifier is reported only once
+conftest.c:8: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ruby.h>
+4: #include <rubysig.h>
+5: 
+6: /*top*/
+7: int main() {return 0;}
+8: int t() { const volatile void *volatile p; p = &(&rb_trap_immediate)[0]; return 0; }
 /* end */
 
 --------------------

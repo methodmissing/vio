@@ -42,9 +42,9 @@ vio_read(VALUE io, VALUE iov)
     GetOpenFile(io, fptr);
     rb_io_check_readable(fptr);
 #ifdef RUBY19
-     fd = fptr->fd;
+    fd = fptr->fd;
 #else
-     fd = fileno(fptr->f);
+    fd = fileno(fptr->f);
 #endif
     struct iovec iovs[IOV_MAX];
     int i, size, bytes_read;
@@ -69,14 +69,38 @@ static VALUE
 vio_write(VALUE io, VALUE iov)
 {
    Check_Type(iov, T_ARRAY);
+   int fd;
 #ifdef RUBY19
     rb_io_t *fptr;
 #else
     OpenFile *fptr;
 #endif
+    if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffers to write given");  
     GetOpenFile(io, fptr);
     rb_io_check_writable(fptr);
-    return Qnil;
+#ifdef RUBY19
+    fd = fptr->fd;
+#else
+    fd = fileno(fptr->f);
+#endif
+    struct iovec iovs[IOV_MAX];
+    int i, size, bytes_written;
+    int expected = 0;
+    int cnt = RARRAY_LEN(iov);
+    VALUE results = rb_ary_new2(cnt);
+    for (i=0; i < cnt; i++) {
+      VALUE str = RARRAY_PTR(iov)[i];
+      size = RSTRING_LEN(str);
+      expected = expected + size;
+      iovs[i].iov_len = size;
+      iovs[i].iov_base = RSTRING_PTR(str);
+    }    
+    bytes_written = writev(fd,iovs,cnt);
+    if (bytes_written < expected) rb_raise(rb_eIOError, "Vectored I/O write failure!");
+    for (i=0; i < cnt; i++) {
+      rb_ary_push(results, INT2FIX(iovs[i].iov_len));
+    }
+    return results;
 }
 
 void Init_vio()
