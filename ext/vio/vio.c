@@ -46,6 +46,9 @@ vio_read(VALUE io, VALUE iov)
 #else
     fd = fileno(fptr->f);
 #endif
+    /* XXX Todo: Error handling */
+    lseek(fd, 0L, SEEK_SET);
+    fptr->lineno = 0;
     struct iovec iovs[IOV_MAX];
     int i, size, bytes_read;
     int expected = 0;
@@ -83,6 +86,9 @@ vio_write(VALUE io, VALUE iov)
 #else
     fd = fileno(fptr->f);
 #endif
+    /* XXX Todo: Error handling */
+    lseek(fd, 0L, SEEK_SET);
+    fptr->lineno = 0;
     struct iovec iovs[IOV_MAX];
     int i, size, bytes_written;
     int expected = 0;

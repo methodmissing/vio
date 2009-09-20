@@ -1,6 +1,5 @@
 *.bundle
-Makefile
-mkmf.log
 .DS_Store
-*.o
-test/scratch/*.txt
+ext/vio/Makefile
+ext/vio/mkmf.log
+ext/vio/vio.o
