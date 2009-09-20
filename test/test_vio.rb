@@ -14,6 +14,9 @@ class TestVectoredIO < Test::Unit::TestCase
     assert_raises IOError do    
       io.readv []
     end
+    assert_raises IOError do    
+      io.readv [-2]
+    end    
     io.close
   end
   
@@ -31,7 +34,7 @@ class TestVectoredIO < Test::Unit::TestCase
     end
     assert_raises IOError do
       io.writev []
-    end
+    end  
     io.close
   end 
 

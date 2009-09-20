@@ -28,6 +28,52 @@
   #include "rubyio.h"
 #endif
 
+static void 
+vio_read_error()
+{
+    switch(errno){
+       case EAGAIN: 
+            rb_raise(rb_eIOError, "The file was marked for non-blocking I/O, and no data were ready to be read.");
+       case EBADF: 
+            rb_raise(rb_eIOError, "File descriptor is not a valid file or socket descriptor open for reading.");
+       case EFAULT: 
+            rb_raise(rb_eIOError, "Buffer points outside the allocated address space.");
+       case EINTR:
+            rb_raise(rb_eIOError, "A read from a slow device was interrupted before any data arrived by the delivery of a signal.");
+       case EINVAL:
+            rb_raise(rb_eIOError, "The pointer associated with file descriptor was negative.");
+       case EIO:
+            rb_raise(rb_eIOError, "An I/O error occurred while reading from the file system.");
+       case EISDIR:
+            rb_raise(rb_eIOError, "An attempt is made to read a directory.");
+       case ENOBUFS:
+            rb_raise(rb_eIOError, "An attempt to allocate a memory buffer fails.");
+       case ENOMEM:
+            rb_raise(rb_eIOError, "Insufficient memory is available.");
+       case ENXIO:
+            rb_raise(rb_eIOError, "An action is requested of a device that does not exist.");
+    }
+}
+
+static void 
+vio_write_error()
+{
+    switch(errno){
+       case EDQUOT: 
+            rb_raise(rb_eIOError, "The user's quota of disk blocks on the file system containing the file is exhausted.");
+       case EFAULT: 
+            rb_raise(rb_eIOError, "Buffer points outside the allocated address space.");
+       case EWOULDBLOCK: 
+            rb_raise(rb_eIOError, "The file descriptor is for a socket, is marked O_NONBLOCK, and write would block.");	
+       case EDESTADDRREQ:
+            rb_raise(rb_eIOError, "The destination is no longer available when writing to a UNIX domain datagram socket on which connect(2) had been used to set a destination address.");
+       case EINVAL:
+            rb_raise(rb_eIOError, "Iov count is less than or equal to 0, or greater than MAX_IOV");
+       case ENOBUFS:
+            rb_raise(rb_eIOError, "The mbuf pool has been completely exhausted when writing to a socket.");
+    }
+}
+
 static VALUE 
 vio_read(VALUE io, VALUE iov)
 {
@@ -61,6 +107,7 @@ vio_read(VALUE io, VALUE iov)
       iovs[i].iov_base = calloc(1,size);
     }    
     bytes_read = readv(fd,iovs,cnt);
+    vio_read_error();
     if (bytes_read < expected) rb_raise(rb_eIOError, "Vectored I/O read failure!");
     for (i=0; i < cnt; i++) {
       rb_ary_push(results, rb_tainted_str_new((char *)iovs[i].iov_base, iovs[i].iov_len));
@@ -102,6 +149,7 @@ vio_write(VALUE io, VALUE iov)
       iovs[i].iov_base = RSTRING_PTR(str);
     }    
     bytes_written = writev(fd,iovs,cnt);
+    vio_write_error();
     if (bytes_written < expected) rb_raise(rb_eIOError, "Vectored I/O write failure!");
     for (i=0; i < cnt; i++) {
       rb_ary_push(results, INT2FIX(iovs[i].iov_len));
