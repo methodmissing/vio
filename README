@@ -31,6 +31,8 @@ Todo :
 
   * Error handling for rewind
   * An API that doesn't impose array arguments
+  * Retries if the requested number of bytes can't be read / written at once
+  * Write bench and logger example
 
 To run the test suite:
 

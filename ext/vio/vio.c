@@ -58,7 +58,7 @@ vio_read(VALUE io, VALUE iov)
       size = FIX2INT(RARRAY_PTR(iov)[i]);
       expected = expected + size;
       iovs[i].iov_len = size;
-      iovs[i].iov_base = malloc(size);
+      iovs[i].iov_base = calloc(1,size);
     }    
     bytes_read = readv(fd,iovs,cnt);
     if (bytes_read < expected) rb_raise(rb_eIOError, "Vectored I/O read failure!");
