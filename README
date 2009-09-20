@@ -23,6 +23,10 @@ Examples :
   => ["8=FIX.4.4","\x019=45", "\x0135=0", "\x0149=TW", "\x0156=ISLD",
 "\x0134=3\x0152=20000426-12:05:06", "\x0110=220\x01"]    
 
+Installation
+
+  sudo gem install methodmissing-vio
+
 Todo :
 
   * Error handling for rewind
