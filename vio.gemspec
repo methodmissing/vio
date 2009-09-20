@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name     = "vio"
-  s.version  = "0.1.0"
+  s.version  = "0.2.0"
   s.date     = "2009-09-19"
   s.summary  = "Vectored I/O extension for Ruby"
   s.email    = "lourens@methodmissing.com"

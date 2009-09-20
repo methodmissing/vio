@@ -19,7 +19,7 @@ Examples :
 
   >>io = File.open('/path/to/fix.txt')) 
   => #<File://path/to/fix.txt>
-  >>io.read([9, 5, 5, 6, 8, 26, 8]) 
+  >>io.read(9, 5, 5, 6, 8, 26, 8) 
   => ["8=FIX.4.4","\x019=45", "\x0135=0", "\x0149=TW", "\x0156=ISLD",
 "\x0134=3\x0152=20000426-12:05:06", "\x0110=220\x01"]    
 
@@ -30,7 +30,6 @@ Installation
 Todo :
 
   * Error handling for rewind + sockets don't support lseek
-  * Write bench and logger example
 
 To run the test suite:
 
