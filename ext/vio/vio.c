@@ -106,9 +106,12 @@ vio_read(VALUE io, VALUE iov)
       iovs[i].iov_len = size;
       iovs[i].iov_base = calloc(1,size);
     }    
-    bytes_read = readv(fd,iovs,cnt);
+    retry:
+      TRAP_BEG;
+      bytes_read = readv(fd,iovs,cnt);
+      TRAP_END;
+    if (bytes_read < expected && bytes_read > 0) goto retry;
     vio_read_error();
-    if (bytes_read < expected) rb_raise(rb_eIOError, "Vectored I/O read failure!");
     for (i=0; i < cnt; i++) {
       rb_ary_push(results, rb_tainted_str_new((char *)iovs[i].iov_base, iovs[i].iov_len));
     }
@@ -148,7 +151,11 @@ vio_write(VALUE io, VALUE iov)
       iovs[i].iov_len = size;
       iovs[i].iov_base = RSTRING_PTR(str);
     }    
-    bytes_written = writev(fd,iovs,cnt);
+    retry:
+      TRAP_BEG;
+      bytes_written = writev(fd,iovs,cnt);
+      TRAP_END;
+    if (bytes_written < expected && bytes_written > 0) goto retry;
     vio_write_error();
     if (bytes_written < expected) rb_raise(rb_eIOError, "Vectored I/O write failure!");
     for (i=0; i < cnt; i++) {
