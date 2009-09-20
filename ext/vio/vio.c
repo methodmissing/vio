@@ -77,7 +77,6 @@ vio_write_error()
 static VALUE 
 vio_read(VALUE io, VALUE iov)
 {
-    Check_Type(iov, T_ARRAY);
     int fd;
 #ifdef RUBY19
     rb_io_t *fptr;
@@ -101,7 +100,9 @@ vio_read(VALUE io, VALUE iov)
     int cnt = RARRAY_LEN(iov);
     VALUE results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
-      size = FIX2INT(RARRAY_PTR(iov)[i]);
+      VALUE size_el = RARRAY_PTR(iov)[i];
+      Check_Type(size_el, T_FIXNUM);
+      size = FIX2INT(size_el);
       expected = expected + size;
       iovs[i].iov_len = size;
       iovs[i].iov_base = calloc(1,size);
@@ -146,6 +147,7 @@ vio_write(VALUE io, VALUE iov)
     VALUE results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
       VALUE str = RARRAY_PTR(iov)[i];
+      Check_Type(str, T_STRING);
       size = RSTRING_LEN(str);
       expected = expected + size;
       iovs[i].iov_len = size;
@@ -166,6 +168,6 @@ vio_write(VALUE io, VALUE iov)
 
 void Init_vio()
 {
-    rb_define_method(rb_cIO, "readv", vio_read, 1);
-    rb_define_method(rb_cIO, "writev", vio_write, 1);
+    rb_define_method(rb_cIO, "readv", vio_read, -2);
+    rb_define_method(rb_cIO, "writev", vio_write, -2);
 }

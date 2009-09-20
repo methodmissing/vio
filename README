@@ -30,7 +30,6 @@ Installation
 Todo :
 
   * Error handling for rewind + sockets don't support lseek
-  * An API that doesn't impose array arguments
   * Write bench and logger example
 
 To run the test suite:

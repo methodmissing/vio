@@ -9,13 +9,16 @@ class TestVectoredIO < Test::Unit::TestCase
   def test_readv_arguments
     io = File.open(fixture('fix.txt'))
     assert_raises TypeError do
-      io.readv(nil)
+      io.readv nil
+    end
+    assert_raises TypeError do
+      io.readv 'string'
+    end    
+    assert_raises IOError do    
+      io.readv
     end
     assert_raises IOError do    
-      io.readv []
-    end
-    assert_raises IOError do    
-      io.readv [-2]
+      io.readv -2
     end    
     io.close
   end
@@ -23,17 +26,20 @@ class TestVectoredIO < Test::Unit::TestCase
   def test_readv
     io = File.open(fixture('fix.txt'))
     expected = CONTENT
-    assert_equal expected, io.readv(LENGTHS)
+    assert_equal expected, io.readv(*LENGTHS)
     io.close
   end  
    
   def test_writev_arguments
     io = File.open(fixture('writable.txt'), 'w')
     assert_raises TypeError do
-      io.writev(nil)
+      io.writev nil  
     end
+    assert_raises TypeError do
+      io.writev 2  
+    end    
     assert_raises IOError do
-      io.writev []
+      io.writev
     end  
     io.close
   end 
@@ -41,7 +47,7 @@ class TestVectoredIO < Test::Unit::TestCase
   def test_writev
     io = File.open(fixture('writable.txt'), 'w')
     expected = LENGTHS
-    assert_equal expected, io.writev(CONTENT.dup)
+    assert_equal expected, io.writev(*CONTENT.dup)
     io.truncate(0)
     io.close
   end 
