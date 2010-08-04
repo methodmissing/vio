@@ -131,11 +131,11 @@ vio_write(VALUE io, VALUE iov)
     struct iovec iovs[IOV_MAX];
     declare_fptr;
     Check_Type(iov, T_ARRAY);
-    if (RARRAY_LEN(iov) == 0) vio_error("No buffers to write given");
+    cnt = RARRAY_LEN(iov);
+    if (cnt == 0) vio_error("No buffers to write given");
     GetOpenFile(io, fptr);
     rb_io_check_writable(fptr);
     declare_fd;
-    cnt = RARRAY_LEN(iov);
     results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
       VALUE str = RARRAY_PTR(iov)[i];

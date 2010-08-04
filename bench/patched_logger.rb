@@ -1,5 +1,5 @@
 class Logger
-  def addv(*msgs)
+  def addv(msgs)
     unless @logdev.nil?
       @logdev.writev(msgs)
     end
