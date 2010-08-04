@@ -1,8 +1,12 @@
 $:.unshift "."
-require File.dirname(__FILE__) + '/../ext/vio/vio'
+def relative(path)
+  File.dirname(__FILE__) + path
+end
+
+require relative('/../ext/vio/vio')
 require "benchmark"
 require "logger"
-require File.dirname(__FILE__) + '/patched_logger'
+require relative('/patched_logger')
 
 PAYLOAD = ['a' * 100,
            'b' * 200,
@@ -15,7 +19,7 @@ PAYLOAD = ['a' * 100,
            'i' * 900,
            'j' * 1000]
 
-FILE = File.dirname(__FILE__) + "/../test/fixtures/writable.txt"
+FILE = relative("/../test/fixtures/writable.txt")
 
 logger = Logger.new(FILE)
 logger.blank_slate
