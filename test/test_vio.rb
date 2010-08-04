@@ -20,6 +20,7 @@ class TestVectoredIO < Test::Unit::TestCase
     assert_raises IOError do
       io.readv -2
     end
+  ensure
     io.close
   end
 
@@ -27,6 +28,7 @@ class TestVectoredIO < Test::Unit::TestCase
     io = File.open(fixture('fix.txt'))
     expected = CONTENT
     assert_equal expected, io.readv(*LENGTHS)
+  ensure
     io.close
   end
 
@@ -41,6 +43,7 @@ class TestVectoredIO < Test::Unit::TestCase
     assert_raises IOError do
       io.writev
     end
+  ensure
     io.close
   end
 
@@ -49,6 +52,7 @@ class TestVectoredIO < Test::Unit::TestCase
     expected = LENGTHS
     assert_equal expected, io.writev(*CONTENT.dup)
     io.truncate(0)
+  ensure
     io.close
   end
 end
