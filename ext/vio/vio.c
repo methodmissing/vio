@@ -28,30 +28,33 @@
   #include "rubyio.h"
 #endif
 
+#define vio_error(err) \
+  rb_raise(rb_eIOError, err);
+
 static void 
 vio_read_error()
 {
     switch(errno){
        case EAGAIN: 
-            rb_raise(rb_eIOError, "The file was marked for non-blocking I/O, and no data were ready to be read.");
+            vio_error("The file was marked for non-blocking I/O, and no data were ready to be read.");
        case EBADF: 
-            rb_raise(rb_eIOError, "File descriptor is not a valid file or socket descriptor open for reading.");
+            vio_error("File descriptor is not a valid file or socket descriptor open for reading.");
        case EFAULT: 
-            rb_raise(rb_eIOError, "Buffer points outside the allocated address space.");
+            vio_error("Buffer points outside the allocated address space.");
        case EINTR:
-            rb_raise(rb_eIOError, "A read from a slow device was interrupted before any data arrived by the delivery of a signal.");
+            vio_error("A read from a slow device was interrupted before any data arrived by the delivery of a signal.");
        case EINVAL:
-            rb_raise(rb_eIOError, "The pointer associated with file descriptor was negative.");
+            vio_error("The pointer associated with file descriptor was negative.");
        case EIO:
-            rb_raise(rb_eIOError, "An I/O error occurred while reading from the file system.");
+            vio_error("An I/O error occurred while reading from the file system.");
        case EISDIR:
-            rb_raise(rb_eIOError, "An attempt is made to read a directory.");
+            vio_error("An attempt is made to read a directory.");
        case ENOBUFS:
-            rb_raise(rb_eIOError, "An attempt to allocate a memory buffer fails.");
+            vio_error("An attempt to allocate a memory buffer fails.");
        case ENOMEM:
-            rb_raise(rb_eIOError, "Insufficient memory is available.");
+            vio_error("Insufficient memory is available.");
        case ENXIO:
-            rb_raise(rb_eIOError, "An action is requested of a device that does not exist.");
+            vio_error("An action is requested of a device that does not exist.");
     }
 }
 
@@ -59,18 +62,18 @@ static void
 vio_write_error()
 {
     switch(errno){
-       case EDQUOT: 
-            rb_raise(rb_eIOError, "The user's quota of disk blocks on the file system containing the file is exhausted.");
-       case EFAULT: 
-            rb_raise(rb_eIOError, "Buffer points outside the allocated address space.");
-       case EWOULDBLOCK: 
-            rb_raise(rb_eIOError, "The file descriptor is for a socket, is marked O_NONBLOCK, and write would block.");	
+       case EDQUOT:
+            vio_error("The user's quota of disk blocks on the file system containing the file is exhausted.");
+       case EFAULT:
+            vio_error("Buffer points outside the allocated address space.");
+       case EWOULDBLOCK:
+            vio_error("The file descriptor is for a socket, is marked O_NONBLOCK, and write would block.");
        case EDESTADDRREQ:
-            rb_raise(rb_eIOError, "The destination is no longer available when writing to a UNIX domain datagram socket on which connect(2) had been used to set a destination address.");
+            vio_error("The destination is no longer available when writing to a UNIX domain datagram socket on which connect(2) had been used to set a destination address.");
        case EINVAL:
-            rb_raise(rb_eIOError, "Iov count is less than or equal to 0, or greater than MAX_IOV");
+            vio_error("Iov count is less than or equal to 0, or greater than MAX_IOV");
        case ENOBUFS:
-            rb_raise(rb_eIOError, "The mbuf pool has been completely exhausted when writing to a socket.");
+            vio_error("The mbuf pool has been completely exhausted when writing to a socket.");
     }
 }
 
