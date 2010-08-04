@@ -77,7 +77,10 @@ vio_write_error()
 static VALUE 
 vio_read(VALUE io, VALUE iov)
 {
-    int fd;
+    int fd, i, size, bytes_read, cnt;
+    int expected = 0;
+    struct iovec iovs[IOV_MAX];
+    VALUE results;
 #ifdef RUBY19
     rb_io_t *fptr;
 #else
@@ -94,11 +97,8 @@ vio_read(VALUE io, VALUE iov)
     /* XXX Todo: Error handling */
     lseek(fd, 0L, SEEK_SET);
     fptr->lineno = 0;
-    struct iovec iovs[IOV_MAX];
-    int i, size, bytes_read;
-    int expected = 0;
-    int cnt = RARRAY_LEN(iov);
-    VALUE results = rb_ary_new2(cnt);
+    cnt = RARRAY_LEN(iov);
+    results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
       VALUE size_el = RARRAY_PTR(iov)[i];
       Check_Type(size_el, T_FIXNUM);
@@ -122,13 +122,16 @@ vio_read(VALUE io, VALUE iov)
 static VALUE 
 vio_write(VALUE io, VALUE iov)
 {
-   Check_Type(iov, T_ARRAY);
-   int fd;
+    int i, size, bytes_written, fd, cnt;
+    int expected = 0;
+    VALUE results;
 #ifdef RUBY19
     rb_io_t *fptr;
 #else
     OpenFile *fptr;
 #endif
+    struct iovec iovs[IOV_MAX];
+    Check_Type(iov, T_ARRAY);
     if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffers to write given");  
     GetOpenFile(io, fptr);
     rb_io_check_writable(fptr);
@@ -137,11 +140,8 @@ vio_write(VALUE io, VALUE iov)
 #else
     fd = fileno(fptr->f);
 #endif
-    struct iovec iovs[IOV_MAX];
-    int i, size, bytes_written;
-    int expected = 0;
-    int cnt = RARRAY_LEN(iov);
-    VALUE results = rb_ary_new2(cnt);
+    cnt = RARRAY_LEN(iov);
+    results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
       VALUE str = RARRAY_PTR(iov)[i];
       Check_Type(str, T_STRING);
