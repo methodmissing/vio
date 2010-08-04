@@ -23,9 +23,17 @@
   #include "ruby/io.h" 
   #define TRAP_BEG
   #define TRAP_END
+  #define declare_fptr \
+     rb_io_t *fptr;
+  #define declare_fd \
+     fd = fptr->fd;
 #else
   #include "rubysig.h"
   #include "rubyio.h"
+  #define declare_fptr \
+     OpenFile *fptr;
+  #define declare_fd \
+     fd = fileno(fptr->f);
 #endif
 
 #define vio_error(err) \
@@ -84,19 +92,11 @@ vio_read(VALUE io, VALUE iov)
     int expected = 0;
     struct iovec iovs[IOV_MAX];
     VALUE results;
-#ifdef RUBY19
-    rb_io_t *fptr;
-#else
-    OpenFile *fptr;
-#endif
+    declare_fptr;
     if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffer offsets given");  
     GetOpenFile(io, fptr);
     rb_io_check_readable(fptr);
-#ifdef RUBY19
-    fd = fptr->fd;
-#else
-    fd = fileno(fptr->f);
-#endif
+    declare_fd;
     /* XXX Todo: Error handling */
     lseek(fd, 0L, SEEK_SET);
     fptr->lineno = 0;
@@ -128,21 +128,13 @@ vio_write(VALUE io, VALUE iov)
     int i, size, bytes_written, fd, cnt;
     int expected = 0;
     VALUE results;
-#ifdef RUBY19
-    rb_io_t *fptr;
-#else
-    OpenFile *fptr;
-#endif
     struct iovec iovs[IOV_MAX];
+    declare_fptr;
     Check_Type(iov, T_ARRAY);
     if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffers to write given");  
     GetOpenFile(io, fptr);
     rb_io_check_writable(fptr);
-#ifdef RUBY19
-    fd = fptr->fd;
-#else
-    fd = fileno(fptr->f);
-#endif
+    declare_fd;
     cnt = RARRAY_LEN(iov);
     results = rb_ary_new2(cnt);
     for (i=0; i < cnt; i++) {
