@@ -6,7 +6,7 @@
 #ifndef RSTRING_PTR
 #define RSTRING_PTR(obj) RSTRING(obj)->ptr
 #endif
- 
+
 #ifndef RSTRING_LEN
 #define RSTRING_LEN(obj) RSTRING(obj)->len
 #endif
@@ -20,7 +20,7 @@
 #endif
 
 #ifdef RUBY19
-  #include "ruby/io.h" 
+  #include "ruby/io.h"
   #define TRAP_BEG
   #define TRAP_END
   #define declare_fptr \
@@ -39,15 +39,15 @@
 #define vio_error(err) \
   rb_raise(rb_eIOError, err);
 
-static void 
+static void
 vio_read_error()
 {
     switch(errno){
-       case EAGAIN: 
+       case EAGAIN:
             vio_error("The file was marked for non-blocking I/O, and no data were ready to be read.");
-       case EBADF: 
+       case EBADF:
             vio_error("File descriptor is not a valid file or socket descriptor open for reading.");
-       case EFAULT: 
+       case EFAULT:
             vio_error("Buffer points outside the allocated address space.");
        case EINTR:
             vio_error("A read from a slow device was interrupted before any data arrived by the delivery of a signal.");
@@ -66,7 +66,7 @@ vio_read_error()
     }
 }
 
-static void 
+static void
 vio_write_error()
 {
     switch(errno){
@@ -85,7 +85,7 @@ vio_write_error()
     }
 }
 
-static VALUE 
+static VALUE
 vio_read(VALUE io, VALUE iov)
 {
     int fd, i, size, bytes_read, cnt;
@@ -109,7 +109,7 @@ vio_read(VALUE io, VALUE iov)
       expected = expected + size;
       iovs[i].iov_len = size;
       iovs[i].iov_base = calloc(1,size);
-    }    
+    }
     retry:
       TRAP_BEG;
       bytes_read = readv(fd,iovs,cnt);
@@ -122,7 +122,7 @@ vio_read(VALUE io, VALUE iov)
     return results;
 }
 
-static VALUE 
+static VALUE
 vio_write(VALUE io, VALUE iov)
 {
     int i, size, bytes_written, fd, cnt;
@@ -144,7 +144,7 @@ vio_write(VALUE io, VALUE iov)
       expected = expected + size;
       iovs[i].iov_len = size;
       iovs[i].iov_base = RSTRING_PTR(str);
-    }    
+    }
     retry:
       TRAP_BEG;
       bytes_written = writev(fd,iovs,cnt);
