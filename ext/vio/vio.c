@@ -93,7 +93,7 @@ vio_read(VALUE io, VALUE iov)
     struct iovec iovs[IOV_MAX];
     VALUE results;
     declare_fptr;
-    if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffer offsets given");  
+    if (RARRAY_LEN(iov) == 0) vio_error("No buffer offsets given");
     GetOpenFile(io, fptr);
     rb_io_check_readable(fptr);
     declare_fd;
@@ -131,7 +131,7 @@ vio_write(VALUE io, VALUE iov)
     struct iovec iovs[IOV_MAX];
     declare_fptr;
     Check_Type(iov, T_ARRAY);
-    if (RARRAY_LEN(iov) == 0) rb_raise(rb_eIOError, "No buffers to write given");  
+    if (RARRAY_LEN(iov) == 0) vio_error("No buffers to write given");
     GetOpenFile(io, fptr);
     rb_io_check_writable(fptr);
     declare_fd;
